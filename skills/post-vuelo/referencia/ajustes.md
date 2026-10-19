@@ -40,4 +40,5 @@ Una historia de Instagram mide 1080 × 1920. Recortando una franja 9:16 de un vi
 
 ## Al volver
 
-14. **Bajá desde la tarjeta**, no desde la app: la app guarda copias livianas en 720p.
+14. **Antes de despegar, mirá la resolución** en la pantalla de cámara: tiene que decir 4K.
+    Un ajuste viejo en 720p o 1080p arruina toda la salida y no tiene arreglo después.

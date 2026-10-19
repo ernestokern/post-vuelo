@@ -363,9 +363,10 @@ Object.entries(porToma).forEach(([id, cortes]) => {
     const v = el("video", { src: c.vista, preload: "metadata", playsinline: "", loop: "", controls: "" });
     v.muted = true;
     const nitido = c.escala <= 1.0;
+    const calidad = !nitido ? `Borrador: estirado ${c.escala.toFixed(1)}×` : c.modo === "relleno" ? "Nítido · con fondo desenfocado" : "Nítido";
     fila.append(el("div", { class: "formato v" + c.formato }, [v,
       el("div", { class: "meta", html: `<b>${c.formato.replace("x", ":")}</b> · ${c.ancho}×${c.alto} · ${c.segundos} s` }),
-      el("span", { class: "calidad " + (nitido ? "ok" : "mal"), text: nitido ? "Nítido" : `Borrador: estirado ${c.escala.toFixed(1)}×` })]));
+      el("span", { class: "calidad " + (nitido ? "ok" : "mal"), text: calidad })]));
   });
   $("#listas").append(el("div", { class: "lista-toma" }, [el("h3", { text: cortes[0].titulo }), fila]));
 });

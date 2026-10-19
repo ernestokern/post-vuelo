@@ -5,7 +5,12 @@ Uso:  python recortar.py <salida> [--solo t01,t03] [--formatos 9x16,4x5,16x9] [-
 Por cada toma elegida (analisis/eleccion.json, o --solo) hace:
 - 9x16  1080×1920  historias y reels
 - 4x5   1080×1350  feed y carrusel
-- 16x9  la resolución del original (4K si se grabó en 4K), para pasar entera
+- 16x9  la resolución del original (4K si se grabó en 4K), para pasar entera; nunca se agranda
+
+Vertical (9x16 y 4x5), --vertical auto|recorte|relleno:
+- recorte: una franja del cuadro. Solo queda nítida si el original es 4K.
+- relleno: el cuadro entero, nítido, al centro, y el mismo video desenfocado arriba y abajo.
+  Es lo que usa "auto" cuando el original no alcanza para recortar sin estirar.
 
 Encuadre: en analisis/notas.json cada toma puede tener "encuadre": {"x": 0.5} (0 = borde izquierdo,
 1 = borde derecho) o {"x": [0.2, 0.7]} para un paneo suave de un lado al otro durante la toma.
@@ -49,6 +54,9 @@ def main():
     ap.add_argument("--crudo")
     ap.add_argument("--solo", help="ids separados por coma (si no, las de eleccion.json)")
     ap.add_argument("--formatos", default="9x16,4x5,16x9")
+    ap.add_argument("--vertical", choices=["auto", "recorte", "relleno"], default="auto",
+                    help="9:16 y 4:5: recortar una franja, o cuadro entero con fondo desenfocado. "
+                         "auto = recorte si el original alcanza (4K), si no relleno")
     ap.add_argument("--config")
     args = ap.parse_args()
     chequear_herramientas()
@@ -78,35 +86,49 @@ def main():
         color = filtro_color(v.get("color"), cfg.get("lut"))
         for fmt in args.formatos.split(","):
             pw, ph, ow, oh = FORMATOS[fmt]
+            modo = "entero"
             if fmt == "16x9":
+                # Nunca se agranda: 4K queda en 4K, 1080p en 1080p, 720p en 720p
                 cw, ch = iw, ih
-                ow, oh = (3840, 2160) if ih >= 2160 else (par(ih * 16 / 9), ih) if ih >= 1080 else (1920, 1080)
-                crop = None
+                ow, oh = (3840, 2160) if ih >= 2160 else (par(ih * 16 / 9), ih)
+                cadena = f"scale={ow}:{oh}:flags=lanczos"
             else:
-                ch = ih
-                cw = par(ih * pw / ph)
-                # x del recorte: fijo o moviéndose de x0 a x1 a lo largo de la toma
-                mov = f"({x0}+({x1}-{x0})*t/{dur:.2f})" if x0 != x1 else f"{x0}"
-                crop = f"crop={cw}:{ch}:'(iw-{cw})*{mov}':0"
+                ch, cw = ih, par(ih * pw / ph)
+                modo = args.vertical if args.vertical != "auto" else ("recorte" if ow / cw <= 1.0 else "relleno")
+                if modo == "recorte":
+                    # franja vertical; x fijo o moviéndose de x0 a x1 a lo largo de la toma
+                    mov = f"({x0}+({x1}-{x0})*t/{dur:.2f})" if x0 != x1 else f"{x0}"
+                    cadena = f"crop={cw}:{ch}:'(iw-{cw})*{mov}':0,scale={ow}:{oh}:flags=lanczos"
+                else:
+                    # cuadro entero nítido al centro, y el mismo video desenfocado de fondo
+                    cw, ch = iw, ih
+                    bw, bh = ow // 8, oh // 8
+                    cadena = (f"split=2[a][b];[a]scale={bw}:{bh}:force_original_aspect_ratio=increase,"
+                              f"crop={bw}:{bh},boxblur=6:2,scale={ow}:{oh}:flags=bicubic,eq=brightness=-0.07[fondo];"
+                              f"[b]scale={ow}:-2:flags=lanczos[frente];[fondo][frente]overlay=(W-w)/2:(H-h)/2")
             escala = round(ow / cw, 2)
-            filtros = [f for f in (crop, f"scale={ow}:{oh}:flags=lanczos", color, "format=yuv420p") if f]
+            cadena = ",".join(f for f in (cadena, color, "format=yuv420p") if f)
             borrador = escala > 1.0
             nombre = f"{i}-{slug(t['titulo'])}-{fmt}{'-BORRADOR' if borrador else ''}.mp4"
-            print(f"{nombre}  ({cw}×{ch} → {ow}×{oh}{', estirado ' + str(escala) + '×' if borrador else ''})", flush=True)
-            ffmpeg("-ss", f"{t['ini']:.2f}", "-to", f"{t['fin']:.2f}", "-i", str(src), "-vf", ",".join(filtros),
-                   "-c:v", "libx264", "-preset", "slow", "-crf", "18", "-profile:v", "high",
+            detalle = f", estirado {escala}×" if borrador else (", con relleno" if modo == "relleno" else "")
+            print(f"{nombre}  ({cw}×{ch} → {ow}×{oh}{detalle})", flush=True)
+            ffmpeg("-ss", f"{t['ini']:.2f}", "-to", f"{t['fin']:.2f}", "-i", str(src), "-filter_complex", cadena,
+                   "-c:v", "libx264", "-preset", "medium", "-crf", "18", "-profile:v", "high",
                    "-color_primaries", "bt709", "-color_trc", "bt709", "-colorspace", "bt709",
                    "-an", "-map_metadata", "-1", "-movflags", "+faststart", str(destino / nombre))
-            listado.append({"toma": i, "titulo": t["titulo"], "formato": fmt, "archivo": nombre,
+            listado.append({"toma": i, "titulo": t["titulo"], "formato": fmt, "archivo": nombre, "modo": modo,
                             "ancho": ow, "alto": oh, "recorte": [cw, ch], "escala": escala,
                             "segundos": round(dur), "fuente": f"{iw}x{ih}"})
 
     guardar_json(destino / "cortes.json", listado)
     malos = [c for c in listado if c["escala"] > 1.0]
+    rellenos = [c for c in listado if c.get("modo") == "relleno"]
     print(f"\n{len(listado)} cortes en {destino}")
+    if rellenos:
+        print(f"{len(rellenos)} verticales van con relleno: el video no tiene resolución para recortar una franja "
+              "sin estirarla (hace falta 4K). Para forzar el recorte: --vertical recorte.")
     if malos:
-        print(f"⚠ {len(malos)} son BORRADOR: el original no tiene resolución para ese formato. "
-              "Con los videos en 4K de la tarjeta salen nítidos.")
+        print(f"⚠ {len(malos)} son BORRADOR: se estiraron más allá de la resolución del original.")
 
 
 if __name__ == "__main__":
