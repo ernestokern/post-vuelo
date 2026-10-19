@@ -1,0 +1,11 @@
+{
+  "name": "post-vuelo",
+  "displayName": "Post-vuelo",
+  "description": "Después de volar un dron DJI: bajar la tarjeta, analizar los videos, elegir las mejores tomas en una página compartible y recortarlas para Instagram.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Ernesto Kern"
+  },
+  "license": "MIT",
+  "keywords": ["drone", "dji", "instagram", "video", "ffmpeg", "dron"]
+}

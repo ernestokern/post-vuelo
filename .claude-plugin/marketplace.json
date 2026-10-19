@@ -1,0 +1,14 @@
+{
+  "name": "post-vuelo",
+  "description": "Skill de Claude Code para el circuito después de volar un dron.",
+  "owner": {
+    "name": "Ernesto Kern"
+  },
+  "plugins": [
+    {
+      "name": "post-vuelo",
+      "source": ".",
+      "description": "Bajar la tarjeta, analizar videos, elegir tomas en una página y recortarlas para Instagram."
+    }
+  ]
+}

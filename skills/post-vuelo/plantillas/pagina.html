@@ -1,0 +1,440 @@
+<title>{{TITULO}}</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Mesa de edición: resumen arriba, pestañas, tarjetas de toma en grilla que pasa a una columna en el celular */
+:root {
+  --bg: #eef1f0; --panel: #ffffff; --ink: #172021; --muted: #5d6b6c; --line: #d6dddc;
+  --agua: #0f7d76; --agua-suave: #d5ecea; --cerro: #b04a32; --cerro-suave: #f3ddd6; --quieto: #c3cbca;
+  --f-display: "Familjen Grotesk", "Segoe UI", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111617; --panel: #1a2122; --ink: #e6ecea; --muted: #94a3a2; --line: #2c3637;
+    --agua: #43c2b6; --agua-suave: #17312f; --cerro: #e58467; --cerro-suave: #3a231d; --quieto: #3b4647;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111617; --panel: #1a2122; --ink: #e6ecea; --muted: #94a3a2; --line: #2c3637;
+  --agua: #43c2b6; --agua-suave: #17312f; --cerro: #e58467; --cerro-suave: #3a231d; --quieto: #3b4647;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.5 var(--f-body); margin: 0; }
+.envoltura { max-width: 1180px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 20px 48px; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(26px, 5vw, 36px); font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: 22px; font-weight: 700; }
+h3 { font-size: 17px; font-weight: 700; }
+.mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+.bajada { color: var(--muted); max-width: 62ch; margin: 6px 0 0; }
+
+.cifras { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin: 18px 0 8px; }
+.cifra { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
+.cifra b { display: block; font: 700 24px/1.1 var(--f-display); font-variant-numeric: tabular-nums; }
+.cifra span { color: var(--muted); font-size: 13px; }
+.cifra.util b { color: var(--agua); }
+.cifra.tirado b { color: var(--cerro); }
+.barra-total { display: flex; height: 10px; border-radius: 5px; overflow: hidden; background: var(--quieto); margin: 4px 0 2px; }
+.barra-total i { display: block; height: 100%; }
+.leyenda { display: flex; flex-wrap: wrap; gap: 14px; color: var(--muted); font-size: 12px; }
+.leyenda i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+
+nav.pestanas { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); display: flex; gap: 4px; margin: 18px 0 14px; padding-block: 8px; border-bottom: 1px solid var(--line); overflow-x: auto; }
+nav.pestanas button { font: 600 14px var(--f-body); background: none; border: 0; color: var(--muted); padding: 8px 12px; border-radius: 6px; cursor: pointer; white-space: nowrap; }
+nav.pestanas button[aria-selected="true"] { color: var(--ink); background: var(--panel); box-shadow: inset 0 -2px 0 var(--agua); }
+button:focus-visible, input:focus-visible, textarea:focus-visible, .flecha:focus-visible { outline: 2px solid var(--agua); outline-offset: 2px; }
+
+.quien { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px 14px; align-items: end; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; }
+.quien label { display: grid; gap: 4px; font-size: 13px; color: var(--muted); }
+.quien input { font: 15px var(--f-body); padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--ink); width: 100%; max-width: 320px; }
+.quien .estado { grid-column: 1 / -1; font-size: 13px; color: var(--muted); margin: 0; }
+.boton { font: 600 14px var(--f-body); padding: 9px 14px; border-radius: 6px; border: 1px solid var(--agua); background: var(--agua); color: var(--panel); cursor: pointer; white-space: nowrap; }
+.boton.sec { background: var(--panel); color: var(--agua); }
+.copiado { grid-column: 1 / -1; }
+.copiado textarea { width: 100%; min-height: 150px; font: 12.5px/1.45 var(--f-mono); padding: 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--ink); }
+
+.filtros { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.chip { font: 500 13px var(--f-body); border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 999px; padding: 5px 12px; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+.grilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+.toma { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; min-width: 0; }
+.toma.si { border-color: var(--agua); box-shadow: 0 0 0 1px var(--agua); }
+.toma.no { opacity: .55; }
+.toma video { display: block; width: 100%; aspect-ratio: 16 / 9; max-width: 100%; background: #000; object-fit: cover; }
+.toma .cuerpo { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.fila { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.puntos { font-family: var(--f-mono); color: var(--cerro); letter-spacing: 1px; white-space: nowrap; }
+.puntos em { color: var(--quieto); font-style: normal; }
+.meta { color: var(--muted); font-size: 12.5px; }
+.etiquetas { display: flex; flex-wrap: wrap; gap: 5px; }
+.etq { font-size: 11.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; padding: 2px 7px; border-radius: 4px; background: var(--agua-suave); color: var(--agua); }
+.etq.tipo { background: transparent; color: var(--muted); border: 1px solid var(--line); }
+.gustos { font-size: 12.5px; color: var(--agua); font-weight: 600; }
+.toma p { margin: 0; font-size: 14px; }
+.decidir { display: flex; gap: 6px; margin-top: auto; padding-top: 4px; }
+.decidir button { flex: 1; font: 600 13px var(--f-body); padding: 8px; border-radius: 6px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; }
+.decidir button.on-si { background: var(--agua); border-color: var(--agua); color: var(--panel); }
+.decidir button.on-no { background: var(--cerro-suave); border-color: var(--cerro); color: var(--cerro); }
+.nota { width: 100%; font: 13px var(--f-body); padding: 7px 9px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--ink); }
+
+.listas { display: grid; gap: 22px; }
+.lista-toma h3 { margin-bottom: 8px; }
+.formatos { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; }
+.formato { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 8px; display: grid; gap: 6px; }
+.formato video { display: block; background: #000; border-radius: 6px; max-width: 100%; }
+.formato.v9x16 video { width: 180px; aspect-ratio: 9 / 16; }
+.formato.v4x5 video { width: 216px; aspect-ratio: 4 / 5; }
+.formato.v16x9 video { width: 320px; aspect-ratio: 16 / 9; }
+.formato .meta b { color: var(--ink); }
+.calidad { font-size: 11.5px; font-weight: 600; padding: 2px 7px; border-radius: 4px; justify-self: start; }
+.calidad.ok { background: var(--agua-suave); color: var(--agua); }
+.calidad.mal { background: var(--cerro-suave); color: var(--cerro); }
+
+.salida { display: grid; gap: 14px; margin-bottom: 34px; }
+.salida-cab { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; }
+.mapa-y-foto { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 14px; }
+.mapa { position: relative; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); background: var(--quieto); }
+.mapa img { display: block; width: 100%; max-width: 100%; }
+.flecha { position: absolute; width: 30px; height: 30px; margin: -15px 0 0 -15px; padding: 0; border: 0; background: none; cursor: pointer; }
+.flecha svg { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 1px 2px rgba(0,0,0,.6)); }
+.escala { position: absolute; left: 10px; bottom: 8px; color: #fff; font: 500 11px var(--f-mono); text-shadow: 0 1px 2px #000; }
+.escala i { display: block; width: 100px; height: 4px; border: 2px solid #fff; border-top: 0; margin-bottom: 2px; }
+.foto-sel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.foto-sel img { width: 100%; border-radius: 6px; display: block; }
+dl { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; margin: 0; font-size: 13px; }
+dt { color: var(--muted); }
+dd { margin: 0; }
+.tira-fotos { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 6px; }
+.tira-fotos button { padding: 0; border: 2px solid transparent; border-radius: 6px; overflow: hidden; background: none; cursor: pointer; position: relative; }
+.tira-fotos button[aria-current="true"] { border-color: var(--agua); }
+.tira-fotos img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+.tira-fotos span { position: absolute; left: 3px; bottom: 2px; font: 500 10.5px var(--f-mono); color: #fff; text-shadow: 0 1px 2px #000; }
+.lineas { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: grid; gap: 7px; }
+.linea { display: grid; grid-template-columns: 74px minmax(0, 1fr) 52px; gap: 10px; align-items: center; font-size: 12px; }
+.linea .barra { position: relative; height: 14px; background: var(--quieto); border-radius: 3px; overflow: hidden; }
+.linea .barra i { position: absolute; top: 0; bottom: 0; }
+.linea .barra i.t { background: var(--agua); cursor: pointer; }
+.linea .barra i.d { background: var(--cerro); opacity: .75; }
+.linea .dur { text-align: right; color: var(--muted); }
+
+.descartes { display: grid; gap: 8px; max-width: 760px; }
+.descarte { display: grid; grid-template-columns: 90px minmax(0, 1fr) 70px; gap: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; align-items: baseline; }
+.descarte .min { color: var(--cerro); text-align: right; font-weight: 500; }
+
+.metodo { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; max-width: 980px; }
+.capa { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+.capa .n { font: 700 13px var(--f-mono); color: var(--agua); }
+.capa h3 { margin: 4px 0 6px; }
+.capa p { margin: 0; font-size: 14px; color: var(--muted); }
+
+@media (max-width: 720px) {
+  .mapa-y-foto { grid-template-columns: 1fr; }
+  .grilla { grid-template-columns: 1fr; }
+  .quien { grid-template-columns: 1fr; }
+  .descarte { grid-template-columns: 1fr 64px; }
+  .descarte .vid { grid-column: 1 / -1; }
+}
+</style>
+
+<div class="envoltura">
+  <header>
+    <h1 id="titulo"></h1>
+    <p class="bajada" id="bajada"></p>
+    <div class="cifras" id="cifras"></div>
+    <div class="barra-total" id="barra-total" role="img"></div>
+    <div class="leyenda">
+      <span><i style="background:var(--agua)"></i>Tomas candidatas</span>
+      <span><i style="background:var(--cerro)"></i>Descartado</span>
+      <span><i style="background:var(--quieto)"></i>Resto del material</span>
+    </div>
+  </header>
+
+  <nav class="pestanas" role="tablist" id="pestanas"></nav>
+
+  <section id="p-tomas">
+    <div class="quien">
+      <label for="nombre">¿Quién elige?<input id="nombre" autocomplete="name" placeholder="Tu nombre"></label>
+      <button class="boton" id="copiar" type="button">Copiar mi elección</button>
+      <p class="estado" id="estado">Marcá "La quiero" en las tomas que te gusten.</p>
+      <div class="copiado" id="copiado" hidden><textarea id="texto-eleccion" readonly aria-label="Tu elección para mandar"></textarea></div>
+    </div>
+    <div class="filtros" id="filtros"></div>
+    <div class="grilla" id="grilla"></div>
+  </section>
+
+  <section id="p-listas" hidden><div class="listas" id="listas"></div></section>
+  <section id="p-salida" hidden></section>
+  <section id="p-descartes" hidden><div class="descartes" id="lista-descartes"></div></section>
+  <section id="p-metodo" hidden>
+    <div class="metodo">
+      <div class="capa"><span class="n">1 · AUTOMÁTICO</span><h3>Medir cada segundo</h3><p>Se saca un cuadro por segundo de cada video y se mide brillo, nitidez y cuánto cambia la imagen. Si casi no cambia durante mucho rato, el dron está quieto o en el piso.</p></div>
+      <div class="capa"><span class="n">2 · CLAUDE MIRA</span><h3>Elegir qué se ve lindo</h3><p>Claude revisa grillas de cuadros con la hora y marca dónde empieza y termina cada toma, de qué tipo es y para qué formato de Instagram sirve.</p></div>
+      <div class="capa"><span class="n">3 · VOS ELEGÍS</span><h3>Marcar las que querés</h3><p>Marcás "La quiero" o "Descartar". Si la página no puede guardar tus marcas, tocá "Copiar mi elección" y mandásela por WhatsApp a quien voló.</p></div>
+      <div class="capa"><span class="n">4 · CORTES</span><h3>Recortar en alta</h3><p>Con las elegidas se hacen versiones vertical 9:16, 4:5 y horizontal, con color corregido, sobre los originales.</p></div>
+    </div>
+  </section>
+</div>
+
+<script>
+const D = /*DATOS*/{};
+const $ = s => document.querySelector(s);
+const fmt = s => `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, "0")}`;
+const diaCorto = d => d ? new Date(d + "T12:00").toLocaleDateString("es-AR", { weekday: "short", day: "numeric" }) : "";
+const diaLargo = d => new Date(d + "T12:00").toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "long" });
+const el = (tag, attrs = {}, kids = []) => {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "text") e.textContent = v; else if (k === "html") e.innerHTML = v; else e.setAttribute(k, v);
+  }
+  for (const k of [].concat(kids)) if (k) e.append(k);
+  return e;
+};
+const guardarLocal = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+const leerLocal = (k, d) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } };
+
+/* ---- encabezado y resumen ---- */
+$("#titulo").textContent = D.titulo;
+const total = Object.values(D.videos).reduce((a, v) => a + v.segundos, 0);
+const util = D.tomas.reduce((a, t) => a + (t.fin - t.ini), 0);
+const tirado = D.descartes.reduce((a, d) => a + (d.fin - d.ini), 0);
+$("#bajada").textContent = `${Object.keys(D.videos).length} videos revisados segundo a segundo. Estas son las tomas que valen, de mejor a peor. Marcá las que querés que se recorten para Instagram.`;
+$("#cifras").append(
+  el("div", { class: "cifra" }, [el("b", { text: fmt(total) }), el("span", { text: "grabado" })]),
+  el("div", { class: "cifra util" }, [el("b", { text: fmt(util) }), el("span", { text: `en ${D.tomas.length} tomas candidatas` })]),
+  el("div", { class: "cifra tirado" }, [el("b", { text: fmt(tirado) }), el("span", { text: `para tirar (${total ? Math.round(tirado / total * 100) : 0} %)` })]),
+  el("div", { class: "cifra" }, [el("b", { text: String(D.tomas.filter(t => t.puntaje === 5).length) }), el("span", { text: "tomas de 5 puntos" })]),
+);
+const bt = $("#barra-total");
+bt.setAttribute("aria-label", `${fmt(util)} en tomas, ${fmt(tirado)} descartado, de ${fmt(total)}`);
+if (total) bt.append(el("i", { style: `width:${util / total * 100}%;background:var(--agua)` }), el("i", { style: `width:${tirado / total * 100}%;background:var(--cerro)` }));
+
+/* ---- pestañas ---- */
+const PESTANAS = [["tomas", "Tomas"], ...(D.listas.length ? [["listas", "Listas para subir"]] : []), ["salida", D.sin_ubicacion ? "Fotos y videos" : "Salida y mapa"], ["descartes", "Descartes"], ["metodo", "Cómo funciona"]];
+PESTANAS.forEach(([k, txt]) => $("#pestanas").append(el("button", { role: "tab", "data-p": k, "aria-selected": "false", text: txt })));
+const botones = [...document.querySelectorAll("#pestanas button")];
+function abrir(p) {
+  botones.forEach(b => b.setAttribute("aria-selected", String(b.dataset.p === p)));
+  ["tomas", "listas", "salida", "descartes", "metodo"].forEach(x => { $("#p-" + x).hidden = x !== p; });
+  guardarLocal("pv:pestana", p);
+}
+botones.forEach(b => b.onclick = () => abrir(b.dataset.p));
+const pedida = location.hash.slice(1);
+const validas = PESTANAS.map(p => p[0]);
+abrir(validas.includes(pedida) ? pedida : validas.includes(leerLocal("pv:pestana")) ? leerLocal("pv:pestana") : (D.listas.length ? "listas" : "tomas"));
+
+/* ---- elección: local siempre, compartida cuando la página puede guardar ---- */
+const CLAVE = "pv:eleccion:" + D.salida;
+let picks = leerLocal(CLAVE, {});          // {t01: {voto: "si"|"no"|"", nota}}
+let otros = {};                             // {uid: {nombre, elecciones}}
+let db = null, miId = null, guardando = Promise.resolve();
+const nombreInput = $("#nombre");
+nombreInput.value = leerLocal("pv:nombre", "");
+nombreInput.onchange = () => { guardarLocal("pv:nombre", nombreInput.value.trim()); compartir(); };
+
+function estado(txt) { $("#estado").textContent = txt; }
+
+function compartir() {
+  guardarLocal(CLAVE, picks);
+  if (!db || !miId) return;
+  const cuerpo = { nombre: nombreInput.value.trim(), elecciones: picks, actualizado: new Date().toISOString() };
+  guardando = guardando.then(() => db.doc("votos/" + miId).set(cuerpo)).then(
+    () => estado("Guardado. Quien armó la página ve tus marcas."),
+    () => { estado("No se pudo guardar en la página. Tus marcas quedan en este navegador: tocá \"Copiar mi elección\" y mandala."); db = null; pintarTomas(); });
+}
+
+function votar(id, voto) {
+  const actual = picks[id] || {};
+  picks[id] = { voto: actual.voto === voto ? "" : voto, nota: actual.nota || "" };
+  pintarTomas(); compartir();
+}
+function anotar(id, nota) {
+  const actual = picks[id] || { voto: "" };
+  if ((actual.nota || "") === nota) return;
+  picks[id] = { voto: actual.voto || "", nota };
+  compartir();
+}
+
+function textoEleccion() {
+  const nombre = nombreInput.value.trim() || "sin nombre";
+  const si = D.tomas.filter(t => (picks[t.id] || {}).voto === "si");
+  const no = D.tomas.filter(t => (picks[t.id] || {}).voto === "no");
+  const notas = D.tomas.filter(t => (picks[t.id] || {}).nota);
+  const lineas = [`Elección de ${nombre} · ${D.titulo}`, "", `Me gustan (${si.length}):`, ...si.map(t => `• ${t.titulo} (${t.id})`)];
+  if (no.length) lineas.push("", `No: ${no.map(t => t.id).join(", ")}`);
+  if (notas.length) lineas.push("", "Notas:", ...notas.map(t => `• ${t.id}: ${picks[t.id].nota}`));
+  const codigo = D.tomas.filter(t => (picks[t.id] || {}).voto).map(t => t.id + (picks[t.id].voto === "si" ? "+" : "-")).join(",");
+  lineas.push("", `PV1|${D.salida}|${encodeURIComponent(nombre)}|${codigo}`);
+  return lineas.join("\n");
+}
+$("#copiar").onclick = async () => {
+  const texto = textoEleccion();
+  const caja = $("#texto-eleccion");
+  caja.value = texto; $("#copiado").hidden = false;
+  try { await navigator.clipboard.writeText(texto); estado("Copiado. Pegalo en WhatsApp o donde quieras y mandáselo a quien voló."); }
+  catch (e) { caja.focus(); caja.select(); estado("Seleccioná el texto de abajo, copialo y mandalo."); }
+};
+
+/* ---- tarjetas de toma ---- */
+let filtro = "todas";
+const FILTROS = [["todas", "Todas"], ["elegidas", "Las que quiero"], ["historia", "Historia"], ["reel", "Reel"], ["carrusel", "Carrusel"], ...[...new Set(D.tomas.map(t => t.dia))].filter(Boolean).map(d => ["dia:" + d, diaCorto(d)])];
+FILTROS.forEach(([k, txt]) => {
+  const b = el("button", { class: "chip", "aria-pressed": String(k === filtro), text: txt });
+  b.onclick = () => { filtro = k; document.querySelectorAll("#filtros .chip").forEach(c => c.setAttribute("aria-pressed", String(c === b))); pintarTomas(); };
+  $("#filtros").append(b);
+});
+const puntos = n => el("span", { class: "puntos", "aria-label": `${n} de 5`, html: "●".repeat(n) + `<em>${"●".repeat(5 - n)}</em>` });
+
+function aQuienLeGusta(id) {
+  return Object.entries(otros).filter(([uid, v]) => uid !== miId && ((v.elecciones || {})[id] || {}).voto === "si").map(([, v]) => v.nombre || "alguien");
+}
+
+function tarjeta(t) {
+  const e = picks[t.id] || {};
+  const vid = el("video", { src: `media/clips/${t.id}.mp4`, poster: `media/clips/${t.id}.jpg`, preload: "none", playsinline: "", loop: "", controls: "" });
+  vid.muted = true;
+  const gustan = aQuienLeGusta(t.id);
+  const si = el("button", { type: "button", class: e.voto === "si" ? "on-si" : "", "aria-pressed": String(e.voto === "si"), text: "La quiero" });
+  const no = el("button", { type: "button", class: e.voto === "no" ? "on-no" : "", "aria-pressed": String(e.voto === "no"), text: "Descartar" });
+  si.onclick = () => votar(t.id, "si"); no.onclick = () => votar(t.id, "no");
+  const nota = el("input", { class: "nota", id: "nota-" + t.id, placeholder: "Nota: para qué la usarías, desde dónde cortar…", "aria-label": "Nota sobre " + t.titulo });
+  nota.value = e.nota || "";
+  nota.onchange = () => anotar(t.id, nota.value.trim());
+  return el("article", { class: "toma" + (e.voto ? " " + e.voto : ""), id: "toma-" + t.id }, [vid, el("div", { class: "cuerpo" }, [
+    el("div", { class: "fila" }, [el("h3", { text: t.titulo }), puntos(t.puntaje)]),
+    el("div", { class: "meta mono", text: `${t.video} · ${fmt(t.ini)}–${fmt(t.fin)} · ${t.fin - t.ini} s · ${diaCorto(t.dia)} ${t.hora}` }),
+    el("div", { class: "etiquetas" }, [...t.formato.map(f => el("span", { class: "etq", text: f })), el("span", { class: "etq tipo", text: t.tipo })]),
+    gustan.length ? el("div", { class: "gustos", text: `También le gusta a: ${gustan.join(", ")}` }) : null,
+    el("p", { text: t.por_que }), nota, el("div", { class: "decidir" }, [si, no]),
+  ])]);
+}
+
+function pintarTomas() {
+  if (document.activeElement && document.activeElement.classList.contains("nota")) return;
+  const lista = D.tomas.filter(t =>
+    filtro === "todas" ? true :
+    filtro === "elegidas" ? (picks[t.id] || {}).voto === "si" :
+    filtro.startsWith("dia:") ? t.dia === filtro.slice(4) : t.formato.includes(filtro));
+  $("#grilla").replaceChildren(...lista.map(tarjeta));
+  if (!lista.length) $("#grilla").append(el("p", { class: "meta", text: filtro === "elegidas" ? "Todavía no marcaste ninguna." : "No hay tomas con este filtro." }));
+}
+pintarTomas();
+
+(async () => {
+  const c = window.claude;
+  if (!c) { estado("Tus marcas quedan en este navegador. Cuando termines, tocá \"Copiar mi elección\" y mandala."); return; }
+  const [base, user] = await Promise.all([c.use("db"), c.use("user")]);
+  miId = user ? await user.id() : null;
+  if (!base || !miId) { estado("Esta vista no guarda marcas en la página. Quedan en tu navegador: al terminar, tocá \"Copiar mi elección\"."); return; }
+  const puede = user.can ? await user.can("data.write") : null;
+  if (puede === false) { estado("Podés mirar y elegir, pero la página no guarda tus marcas. Al terminar, tocá \"Copiar mi elección\" y mandala."); return; }
+  db = base;
+  // Primera vez del dueño en una página vieja: trae las marcas que había en "elecciones"
+  const mio = await db.doc("votos/" + miId).get().catch(() => null);
+  if (mio && mio.exists) {
+    picks = { ...picks, ...(mio.data().elecciones || {}) };
+    if (!nombreInput.value && mio.data().nombre) nombreInput.value = mio.data().nombre;
+  } else if (user.isOwner && await user.isOwner()) {
+    const viejas = await db.collection("elecciones").get().catch(() => null);
+    if (viejas && !viejas.empty) { viejas.docs.forEach(d => { picks[d.id] = { voto: d.data().voto || "", nota: d.data().nota || "" }; }); compartir(); }
+  }
+  guardarLocal(CLAVE, picks);
+  estado("Tus marcas se guardan solas en la página.");
+  pintarTomas();
+  db.collection("votos").onSnapshot(snap => {
+    const nuevo = {};
+    snap.docs.forEach(d => { nuevo[d.id] = d.data(); });
+    otros = nuevo; pintarTomas();
+  }, () => {});
+})();
+
+/* ---- listas para subir ---- */
+const porToma = {};
+D.listas.forEach(c => (porToma[c.toma] = porToma[c.toma] || []).push(c));
+Object.entries(porToma).forEach(([id, cortes]) => {
+  const fila = el("div", { class: "formatos" });
+  cortes.sort((a, b) => ["9x16", "4x5", "16x9"].indexOf(a.formato) - ["9x16", "4x5", "16x9"].indexOf(b.formato)).forEach(c => {
+    const v = el("video", { src: c.vista, preload: "metadata", playsinline: "", loop: "", controls: "" });
+    v.muted = true;
+    const nitido = c.escala <= 1.0;
+    fila.append(el("div", { class: "formato v" + c.formato }, [v,
+      el("div", { class: "meta", html: `<b>${c.formato.replace("x", ":")}</b> · ${c.ancho}×${c.alto} · ${c.segundos} s` }),
+      el("span", { class: "calidad " + (nitido ? "ok" : "mal"), text: nitido ? "Nítido" : `Borrador: estirado ${c.escala.toFixed(1)}×` })]));
+  });
+  $("#listas").append(el("div", { class: "lista-toma" }, [el("h3", { text: cortes[0].titulo }), fila]));
+});
+
+/* ---- salida: mapa, fotos y líneas de tiempo ---- */
+function flechaSVG(f) {
+  const color = f.camara !== null && f.camara < -60 ? "#5fb4ff" : "#ff9a52";
+  return `<svg viewBox="-15 -15 30 30" style="transform:rotate(${f.rumbo || 0}deg)"><path d="M0,-13 L7,6 L0,1.5 L-7,6 Z" fill="${color}" stroke="#fff" stroke-width="1.6"/></svg>`;
+}
+function detalleFoto(caja, f) {
+  const cam = f.camara === null || f.camara === undefined ? "?" : f.camara < -60 ? "cenital, mirando abajo" : f.camara > -20 ? "horizontal" : "oblicua";
+  caja.replaceChildren(el("img", { src: "media/fotos/" + f.archivo, alt: "Foto " + f.archivo }), el("dl", {}, [
+    el("dt", { text: "Foto" }), el("dd", { class: "mono", text: f.archivo }),
+    el("dt", { text: "Hora" }), el("dd", { class: "mono", text: (f.hora || "").slice(11, 16) }),
+    el("dt", { text: "Altura" }), el("dd", { text: f.altura === null || f.altura === undefined ? "sin dato" : `${f.altura.toFixed(1)} m sobre el despegue` }),
+    el("dt", { text: "Cámara" }), el("dd", { text: cam }),
+  ]));
+}
+const dias = [...new Set([...Object.values(D.videos).map(v => (v.inicio || "").slice(0, 10)), ...D.fotos.map(f => (f.hora || "").slice(0, 10))])].filter(Boolean).sort();
+dias.forEach(dia => {
+  const sec = el("div", { class: "salida" });
+  const vids = Object.entries(D.videos).filter(([, v]) => (v.inicio || "").startsWith(dia));
+  const fotos = D.fotos.filter(f => (f.hora || "").startsWith(dia));
+  sec.append(el("div", { class: "salida-cab" }, [el("h2", { text: diaLargo(dia) }), el("span", { class: "meta", text: `${vids.length} videos · ${fmt(vids.reduce((a, [, v]) => a + v.segundos, 0))} grabados · ${fotos.length} fotos` })]));
+  if (fotos.length) {
+    const caja = el("div", { class: "foto-sel" });
+    const tira = el("div", { class: "tira-fotos" });
+    const elegir = f => { detalleFoto(caja, f); tira.querySelectorAll("button").forEach(b => b.setAttribute("aria-current", String(b.dataset.a === f.archivo))); };
+    const m = D.mapas[dia];
+    let mapa = null;
+    if (m) {
+      mapa = el("div", { class: "mapa" }, [el("img", { src: m.imagen, alt: "Imagen satelital de la zona" }), el("div", { class: "escala", html: `<i></i>${m.metros_por_100px} m` })]);
+      fotos.filter(f => f.x !== undefined).forEach(f => {
+        const fl = el("button", { class: "flecha", style: `left:${f.x}%;top:${f.y}%`, "aria-label": "Foto " + f.archivo, html: flechaSVG(f) });
+        fl.onclick = () => elegir(f);
+        mapa.append(fl);
+      });
+    }
+    fotos.forEach(f => {
+      const b = el("button", { "data-a": f.archivo, "aria-label": "Ver " + f.archivo }, [el("img", { src: "media/fotos/" + f.archivo, alt: "", loading: "lazy" }), el("span", { text: (f.hora || "").slice(11, 16) })]);
+      b.onclick = () => elegir(f);
+      tira.append(b);
+    });
+    sec.append(mapa ? el("div", { class: "mapa-y-foto" }, [mapa, caja]) : caja);
+    if (mapa) sec.append(el("div", { class: "leyenda" }, [el("span", { html: '<i style="background:#ff9a52"></i>Foto oblicua u horizontal' }), el("span", { html: '<i style="background:#5fb4ff"></i>Foto cenital' }), el("span", { text: "La flecha apunta hacia donde miraba la cámara." })]));
+    sec.append(tira);
+    elegir(fotos[0]);
+  }
+  if (vids.length) {
+    const lineas = el("div", { class: "lineas" }, [el("h3", { text: "Videos" })]);
+    vids.forEach(([nombre, v]) => {
+      const barra = el("div", { class: "barra" });
+      D.tomas.filter(t => t.video === nombre).forEach(t => {
+        const i = el("i", { class: "t", style: `left:${t.ini / v.segundos * 100}%;width:${(t.fin - t.ini) / v.segundos * 100}%`, title: t.titulo });
+        i.onclick = () => { filtro = "todas"; abrir("tomas"); document.querySelectorAll("#filtros .chip").forEach((c, k) => c.setAttribute("aria-pressed", String(k === 0))); pintarTomas(); $("#toma-" + t.id).scrollIntoView({ block: "center" }); };
+        barra.append(i);
+      });
+      D.descartes.filter(d => d.video === nombre).forEach(d => barra.append(el("i", { class: "d", style: `left:${d.ini / v.segundos * 100}%;width:${(d.fin - d.ini) / v.segundos * 100}%`, title: d.motivo })));
+      lineas.append(el("div", { class: "linea" }, [el("span", { class: "mono", text: `${nombre.replace("DJI_", "")} · ${(v.inicio || "").slice(11, 16)}` }), barra, el("span", { class: "dur mono", text: fmt(v.segundos) })]));
+    });
+    sec.append(lineas);
+  }
+  $("#p-salida").append(sec);
+});
+
+/* ---- descartes ---- */
+[...D.descartes].sort((a, b) => (b.fin - b.ini) - (a.fin - a.ini)).forEach(d => {
+  $("#lista-descartes").append(el("div", { class: "descarte" }, [
+    el("span", { class: "vid mono", text: `${d.video} ${fmt(d.ini)}` }), el("span", { text: d.motivo }), el("span", { class: "min mono", text: fmt(d.fin - d.ini) }),
+  ]));
+});
+</script>

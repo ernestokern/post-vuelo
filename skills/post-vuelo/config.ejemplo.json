@@ -1,0 +1,9 @@
+{
+  "destino": "G:\\Mi unidad\\Dron\\Salidas",
+  "corte_horas": 3,
+  "margen_libre_gb": 5,
+  "lut": null,
+  "lugares": [
+    {"nombre": "Ejemplo (borrar)", "lat": -34.6037, "lon": -58.3816, "radio_km": 2}
+  ]
+}

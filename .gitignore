@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+# Nunca subir material de vuelo ni configuraciones personales
+*.MP4
+*.mp4
+*.MOV
+*.JPG
+*.jpg
+*.DNG
+*.SRT
+post-vuelo.json
+pagina/
