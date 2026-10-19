@@ -55,6 +55,8 @@ Cualquiera que tarde más de 2 minutos (copiar, analizar muchos videos, recortar
    sin coordenadas y sin el nombre del lugar, y las fotos y videos sin metadatos.
 2. `pagina.py <salida> --pagina <carpeta dentro del directorio de trabajo> [--sin-ubicacion]`.
    Deja `index.html` (para artifact), `sitio.html` (para cualquier hosting) y `archivos.json`.
+   Cuando los cortes estén en una carpeta compartible (Drive), sumá `--descargas <link>`: la página
+   no puede servir archivos en alta, así que la pestaña "Listas para subir" apunta a esa carpeta.
 3. **Si tenés la herramienta Artifact:** publicá `<pagina>/index.html` con `root` en `<pagina>`,
    `files` = la lista de `archivos.json`, icono `video` y estas capacidades:
    ```json

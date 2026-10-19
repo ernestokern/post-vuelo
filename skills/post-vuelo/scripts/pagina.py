@@ -108,6 +108,7 @@ def main():
     ap.add_argument("--pagina", help="carpeta de salida de la página (por defecto ./pagina/<salida>)")
     ap.add_argument("--sin-ubicacion", action="store_true", help="sin mapa, sin coordenadas, sin nombre del lugar")
     ap.add_argument("--titulo", help="título visible (por defecto, el nombre de la salida)")
+    ap.add_argument("--descargas", help="link a la carpeta con los cortes en alta (ej. Google Drive)")
     args = ap.parse_args()
 
     salida = Path(args.salida).resolve()
@@ -169,7 +170,7 @@ def main():
         "salida": salida.name if not args.sin_ubicacion else fecha,
         "titulo": titulo, "revisado": notas.get("revisado"), "sin_ubicacion": args.sin_ubicacion,
         "tomas": tomas, "descartes": notas.get("descartes", []), "videos": videos,
-        "fotos": fotos, "mapas": mapas, "listas": listas,
+        "fotos": fotos, "mapas": mapas, "listas": listas, "descargas": args.descargas,
     }
     plantilla = (AQUI.parent / "plantillas" / "pagina.html").read_text(encoding="utf-8")
     html = plantilla.replace("/*DATOS*/{}", json.dumps(datos, ensure_ascii=False)).replace("{{TITULO}}", titulo)
