@@ -8,6 +8,8 @@ listas para Instagram.
 the best shots on a shareable page, and export sharp 9:16, 4:5 and 16:9 cuts for Instagram.
 Spanish-first; Claude answers in your language.*
 
+![La página para elegir: cada toma con su vista previa, el tipo de toma y los botones "La quiero" y "Descartar"](docs/pagina-elegir.jpg)
+
 ## Qué hace
 
 1. **Bajar**: copia la tarjeta a la carpeta que elijas (por ejemplo Google Drive), separada por
@@ -25,6 +27,19 @@ Spanish-first; Claude answers in your language.*
 
 Con `--sin-ubicacion`, la página sale sin mapa, sin coordenadas y sin el nombre del lugar,
 para compartirla con gente de afuera.
+
+## Un ejemplo real
+
+Dos salidas de octubre con un Mavic Air 2, 22 videos y 32 minutos de grabación:
+
+- **Análisis:** 9 minutos quedaron en 20 tomas candidatas y 18 minutos (58 %) fueron para tirar.
+  El grueso eran 13 minutos con la cámara grabando en el piso después de aterrizar.
+- **Elección:** la página se compartió y se eligieron 13 tomas.
+- **Cortes:** salieron 39 archivos, cada toma en 9:16, 4:5 y 16:9. Los videos estaban en 720p,
+  así que los verticales se armaron "con relleno": el cuadro entero y nítido al centro, y el
+  mismo video desenfocado arriba y abajo, en lugar de estirar una franja angosta hasta que se pixele.
+
+![Los tres cortes de una toma, con la calidad de cada uno](docs/pagina-cortes.jpg)
 
 ## Requisitos
 

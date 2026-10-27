@@ -10,3 +10,4 @@ __pycache__/
 *.SRT
 post-vuelo.json
 pagina/
+!docs/*.jpg
